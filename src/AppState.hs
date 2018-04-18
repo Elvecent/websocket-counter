@@ -7,6 +7,7 @@ module AppState
   , counter
   , initialState
   , modifyCounter
+  , getCounter
   ) where
 
 import Data.Text
@@ -35,6 +36,7 @@ modifyCounter :: Int -> StateIO ()
 modifyCounter num = do
   lift . putText $
     "Counter modification: " `append` (pack $ show num)
+  counter += num
 
 getCounter :: StateIO Int
 getCounter = do

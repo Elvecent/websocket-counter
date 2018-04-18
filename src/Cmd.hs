@@ -30,15 +30,14 @@ parseCmd text = case Txt.words text of
 
 evalCmd :: Command -> StateIO (Either () Txt.Text)
 evalCmd IncCounter = do
-  counter += 1
+  modifyCounter 1
   return . Left $ ()
 evalCmd DecCounter = do
-  counter -= 1
+  modifyCounter (-1)
   return . Left $ ()
 evalCmd ReqCounter = do
-  state <- get
-  return . Right . Txt.pack . show $
-    state^.counter
+  c <- getCounter
+  return . Right . Txt.pack . show $ c
 evalCmd (ErrCmd s) = do
   let quote t = Txt.cons '\"' $ Txt.snoc t '\"'
   let error =
