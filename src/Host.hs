@@ -35,7 +35,7 @@ runHost startHost = do
   sapp <- scottyApp
   Warp.runSettings settings $
     WaiWs.websocketsOr
-      WS.defaultConnectionOptions
+      WS.defaultConnectionOptions 
       (wsapp startHost)
       sapp
 

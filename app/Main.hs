@@ -23,7 +23,6 @@ manageConnection conn = do
     (res, state') <- runStateT cmd state
     putMVar var state'
     either
-      (\() -> return ())
-      (\str ->
-         conn^.conSendData $ encodeUtf8 str)
+      pure
+      ((conn^.conSendData) . encodeUtf8)
       res
