@@ -9,40 +9,39 @@ module Cmd
 
 import AppState
 
-import qualified Data.Text.Lazy as Txt
-import Control.Monad.Trans.Class
-import Control.Monad.Trans.State
+import qualified Data.Text.Lazy as T
+import Control.Monad.State
 import Control.Lens
 
 data Command =
     IncCounter
   | DecCounter
   | ReqCounter
-  | ErrCmd Txt.Text
+  | ErrCmd T.Text
   deriving Show
 
-parseCmd :: Txt.Text -> Command
-parseCmd text = case Txt.words text of
+parseCmd :: T.Text -> Command
+parseCmd text = case T.words text of
   ["increment", "counter"] -> IncCounter
   ["decrement", "counter"] -> DecCounter
   ["request", "counter"] -> ReqCounter
   _ -> ErrCmd text
 
-evalCmd :: Command -> StateIO (Either () Txt.Text)
+evalCmd :: (MonadCounter m) => Command -> m (Either () T.Text)
 evalCmd IncCounter = do
-  modifyCounter 1
-  return . Left $ ()
+  update 1
+  pure $ Left ()
 evalCmd DecCounter = do
-  modifyCounter (-1)
-  return . Left $ ()
+  update (-1)
+  pure . Left $ ()
 evalCmd ReqCounter = do
-  c <- getCounter
-  return . Right . Txt.pack . show $ c
+  c <- request
+  pure . Right . T.pack . show $ c
 evalCmd (ErrCmd s) = do
-  let quote t = Txt.cons '\"' $ Txt.snoc t '\"'
+  let quote t = T.cons '\"' $ T.snoc t '\"'
   let error =
         "Error: received unrecognised command "
-        `Txt.append`
+        `T.append`
         quote s
-  lift $ putStrLn . Txt.unpack $ error
-  return . Right $ error
+  handleError error
+  pure . Right $ error

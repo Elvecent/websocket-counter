@@ -20,7 +20,7 @@ manageConnection conn = do
   var <- newMVar initialState
   forever $ do
     text <- conn^.conReceiveText
-    let cmd = evalCmd . parseCmd $ text
+    let cmd = runApp . evalCmd . parseCmd $ text
     state <- takeMVar var
     (res, state') <- runStateT cmd state
     putMVar var state'

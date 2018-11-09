@@ -1,20 +1,24 @@
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE OverloadedStrings,
+             TemplateHaskell,
+             GeneralizedNewtypeDeriving
+#-}
 
 module AppState
   ( AppState
-  , StateIO
+  , App
   , counter
   , initialState
-  , modifyCounter
-  , getCounter
+  , MonadCounter (..)
+  , runApp
   ) where
 
-import Data.Text
+import Data.Text.Lazy as T
+import qualified Data.Text.Lazy.IO as TIO
 import Control.Lens.TH (makeLenses)
 import Control.Lens
 import Control.Monad.Trans.Class (lift)
-import Control.Monad.Trans.State
+import Control.Monad.State
+import Control.Monad.IO.Class
 
 data AppState = AppState
   { _counter :: Int
@@ -22,23 +26,34 @@ data AppState = AppState
 
 makeLenses ''AppState
 
-type StateIO a = StateT AppState IO a
+newtype App a = App {runApp :: StateT AppState IO a}
+  deriving (Functor, Applicative, Monad, MonadIO, MonadState AppState)
 
 initialState :: AppState
 initialState = AppState
   { _counter = 0
   }
 
-putText :: Text -> IO ()
-putText = putStrLn . unpack
+putTextLn :: MonadIO m => Text -> m ()
+putTextLn = liftIO . TIO.putStrLn
 
-modifyCounter :: Int -> StateIO ()
-modifyCounter num = do
-  lift . putText $
-    "Counter modification: " `append` (pack $ show num)
-  counter += num
 
-getCounter :: StateIO Int
-getCounter = do
-  state <- get
-  return $ state^.counter
+class Monad m => MonadCounter m where
+  update :: Int -> m ()
+  request :: m Int
+  handleError :: T.Text -> m ()
+
+instance MonadCounter App where
+  update n = do
+    putTextLn $
+      "Counter modification: "
+      `T.append`
+      (T.pack $ show n)
+    counter += n
+
+  request = do
+    putTextLn "Counter value requested"
+    state <- get
+    pure $ state ^. counter
+
+  handleError e = putTextLn e
