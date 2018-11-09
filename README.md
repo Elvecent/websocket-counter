@@ -3,7 +3,7 @@ This example illustrates a way to keep and modify server-side state accesible th
 
 The code features the use of monad transformers and lenses.
 
-To run the example, build or just run it with Stack and open `html/index.html` in a web-browser.
+To run the example, build or just run it with Stack and open 127.0.0.1:8080 in a web-browser.
 
 `$ stack repl`
 
