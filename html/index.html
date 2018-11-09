@@ -4,13 +4,15 @@
     </div>
     <button id="inc">+</button>
     <button id="dec">-</button>
+    <button id="err">Send erroneous query</button>
   </body>
   <script>
     const output = document.getElementById("output");
     const inc = document.getElementById("inc");
     const dec = document.getElementById("dec");
+    const err = document.getElementById("err");
     
-    const ws = new WebSocket("ws://localhost:80");
+    const ws = new WebSocket("ws://localhost:8080");
 
     ws.onopen = function () {
       ws.send("request counter");
@@ -24,6 +26,11 @@
         ws.send("decrement counter");    
         ws.send("request counter");
       };
+    
+      err.onclick = function () {
+        ws.send("erroneous query");
+      };
+    
     };
 
     ws.onmessage = function (m) {

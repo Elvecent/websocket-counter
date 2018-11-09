@@ -32,7 +32,7 @@ makeLenses ''Connection
 
 runHost :: (Connection -> IO ()) -> IO ()
 runHost startHost = do
-  let settings = Warp.setPort 80 $
+  let settings = Warp.setPort 8080 $
         Warp.setHost "127.0.0.1" $
         Warp.defaultSettings
   sapp <- scottyApp
