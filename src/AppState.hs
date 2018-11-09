@@ -5,11 +5,11 @@
 
 module AppState
   ( AppState
-  , App
+  , Counter
   , counter
   , initialState
   , MonadCounter (..)
-  , runApp
+  , runCounter
   ) where
 
 import Data.Text.Lazy as T
@@ -25,7 +25,7 @@ data AppState = AppState
 
 makeLenses ''AppState
 
-newtype App a = App {runApp :: StateT AppState IO a}
+newtype Counter a = Counter {runCounter :: StateT AppState IO a}
   deriving (Functor, Applicative, Monad, MonadIO, MonadState AppState)
 
 initialState :: AppState
@@ -42,7 +42,7 @@ class Monad m => MonadCounter m where
   request :: m Int
   handleError :: T.Text -> m ()
 
-instance MonadCounter App where
+instance MonadCounter Counter where
   update n = do
     putTextLn $
       "Counter modification: "

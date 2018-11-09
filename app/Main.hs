@@ -1,7 +1,7 @@
 module Main where
 
 import Host
-import AppState (runApp, initialState)
+import AppState (runCounter, initialState)
 import Cmd
 
 import Control.Lens
@@ -18,7 +18,7 @@ manageConnection conn = do
   var <- newMVar initialState
   forever $ do
     text <- conn^.conReceiveText
-    let cmd = runApp . evalCmd . parseCmd $ text
+    let cmd = runCounter . evalCmd . parseCmd $ text
     state <- takeMVar var
     (res, state') <- runStateT cmd state
     putMVar var state'
