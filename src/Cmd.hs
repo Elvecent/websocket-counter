@@ -11,7 +11,6 @@ import AppState
 
 import qualified Data.Text.Lazy as T
 import Control.Monad.State
-import Control.Lens
 
 data Command =
     IncCounter

@@ -14,14 +14,11 @@ import Cmd
 import qualified Web.Scotty as Sc
 import qualified Data.ByteString.Lazy as BSL
 import Control.Lens.TH (makeLenses)
-import Control.Lens
 import Network.Wai as Wai
 import Network.Wai.Handler.Warp as Warp
 import Network.Wai.Handler.WebSockets as WaiWs
 import qualified Network.WebSockets as WS
 import Data.Text.Lazy
-import Control.Concurrent.MVar
-import Control.Monad.IO.Class
 
 data Connection =
   Connection { _conSendData :: BSL.ByteString -> IO ()

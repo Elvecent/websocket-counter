@@ -15,10 +15,9 @@ module AppState
 import Data.Text.Lazy as T
 import qualified Data.Text.Lazy.IO as TIO
 import Control.Lens.TH (makeLenses)
-import Control.Lens
-import Control.Monad.Trans.Class (lift)
+import Control.Lens ((+=), (^.))
 import Control.Monad.State
-import Control.Monad.IO.Class
+import Control.Monad.IO.Class (liftIO)
 
 data AppState = AppState
   { _counter :: Int
